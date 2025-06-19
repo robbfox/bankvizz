@@ -1,0 +1,17 @@
+# .vercelignore
+
+# Ignore the entire node_modules directory, this is the biggest cause of size issues.
+node_modules/
+
+# Ignore Gatsby's build cache and public output directory.
+.cache/
+public/
+
+# Ignore Git history and local environment files.
+.git/
+.gitignore
+.env*
+
+# Ignore any local development folders or logs.
+npm-debug.log
+yarn-error.log
