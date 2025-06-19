@@ -1,2 +1,0 @@
-# /api/requirements.txt
-requests
