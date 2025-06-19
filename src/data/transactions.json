@@ -1,0 +1,8 @@
+[
+  { "date": "2024-05-19", "description": "SAINSBURYS S/MKTS", "value": -43.51, "category": "Groceries" },
+  { "date": "2024-05-13", "description": "COMMUNITYFIBRE LTD", "value": -28.30, "category": "Utilities" },
+  { "date": "2024-05-08", "description": "ROBERT", "value": -150.00, "category": "Rent/Transfer" },
+  { "date": "2024-05-01", "description": "BRITISH GAS", "value": -125.20, "category": "Utilities" },
+  { "date": "2024-04-30", "description": "SPARTA GLOBAL LIMI", "value": 1818.06, "category": "Income" },
+  { "date": "2024-04-25", "description": "LBC COUNCIL TAX", "value": -230.77, "category": "Bills" }
+]
