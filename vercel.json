@@ -1,7 +1,26 @@
 {
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "@vercel/python@3.0.0"
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/requirements.txt",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "public"
+      }
     }
-  }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
 }
