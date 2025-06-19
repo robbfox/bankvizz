@@ -1,7 +1,11 @@
 import React from 'react';
-import Plot from 'react-plotly.js';
 import { graphql, useStaticQuery } from 'gatsby';
 import '../styles/dashboard.css'; // Assuming you have a CSS file for styling
+import loadable from '@loadable/component'; 
+
+const Plot = loadable(() => import('react-plotly.js'), {
+  fallback: <div>Loading Chart...</div>
+})
 
 // This is a helper function to get the start of the week (Monday) for any given date
 const getStartOfWeek = (date) => {
