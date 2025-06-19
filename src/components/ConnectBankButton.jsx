@@ -1,16 +1,20 @@
+// src/components/ConnectBankButton.jsx
 import React from 'react';
 
 const ConnectBankButton = () => {
-  // We will build the authorization URL here
   const buildAuthUrl = () => {
-    const authUrl = new URL('https://auth.truelayer.com/');
+    // Vercel automatically provides process.env.VERCEL_URL in the build environment.
+    // We fall back to the localhost URL for local development.
+    // The GATSBY_ prefix is required by Gatsby to expose the variable to the browser.
+    const rootUrl = process.env.GATSBY_VERCEL_URL || 'http://localhost:8000';
+    const redirectUri = `${rootUrl}/api/truelayer_callback`;
 
-    // These parameters tell TrueLayer what we want
+    const authUrl = new URL('https://auth.truelayer.com/');
     authUrl.searchParams.append('response_type', 'code');
-    authUrl.searchParams.append('client_id', 'YOUR_CLIENT_ID_HERE'); // You can hardcode this for now
+    authUrl.searchParams.append('client_id', process.env.GATSBY_TRUELAYER_CLIENT_ID); // Use env var
     authUrl.searchParams.append('scope', 'accounts transactions:read balance:read offline_access');
-    authUrl.searchParams.append('redirect_uri', 'http://localhost:8000/api/truelayer_callback');
-    authUrl.searchParams.append('providers', 'uk-natwest'); // Pre-select the bank to make it easier
+    authUrl.searchParams.append('redirect_uri', redirectUri); // Use the dynamic URI
+    authUrl.searchParams.append('providers', 'uk-natwest');
 
     return authUrl.toString();
   };
