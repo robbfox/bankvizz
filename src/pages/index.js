@@ -5,14 +5,13 @@ import Layout from "../components/layout"
 import Seo from "../components/seo"
 import Dashboard from "../components/dashboard"
 
-const SecondPage = () => (
+const MainPage = () => (
   <Layout>
 
-    <Link to="/">Go back to the homepage</Link>
     <Dashboard />
   </Layout>
 )
 
-export const Head = () => <Seo title="Page two" />
+export const Head = () => <Seo title="main page" />
 
-export default SecondPage
+export default MainPage
