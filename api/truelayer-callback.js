@@ -6,9 +6,9 @@ import axios from 'axios/dist/node/axios.cjs';
 export default async function handler(req, res) {
   // 1. Get the one-time 'code' from the URL TrueLayer sent the user back with
   const { code } = req.query;
-  console.log(code);
   console.log('Received code:', code);
-  console.log('Redirect URI used:', redirectUri);
+
+
 
 
 
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
   // The redirect URI must still match what's in the TrueLayer console
   const rootUrl = process.env.GATSBY_VERCEL_URL ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
   const redirectUri = `${rootUrl}/api/truelayer-callback`;
+  console.log('Redirect URI used:', redirectUri);
 
   const params = new URLSearchParams();
   params.append('grant_type', 'authorization_code');
