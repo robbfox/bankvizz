@@ -6,7 +6,7 @@
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
     "@loadable/component": "^5.16.7",
-    "axios": "^1.10.0",
+    "axios": "^1.7.2",
     "gatsby": "^5.14.1",
     "gatsby-plugin-image": "^3.14.0",
     "gatsby-plugin-manifest": "^5.14.0",
