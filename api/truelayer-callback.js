@@ -6,6 +6,8 @@ import axios from 'axios/dist/node/axios.cjs';
 export default async function handler(req, res) {
   // 1. Get the one-time 'code' from the URL TrueLayer sent the user back with
   const { code } = req.query;
+  console.log(code);
+
 
   if (!code) {
     return res.status(400).send('Error: No authorization code received.');
