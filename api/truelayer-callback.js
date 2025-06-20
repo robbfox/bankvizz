@@ -7,6 +7,9 @@ export default async function handler(req, res) {
   // 1. Get the one-time 'code' from the URL TrueLayer sent the user back with
   const { code } = req.query;
   console.log(code);
+  console.log('Received code:', code);
+  console.log('Redirect URI used:', redirectUri);
+
 
 
   if (!code) {
