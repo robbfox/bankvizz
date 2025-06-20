@@ -1,5 +1,5 @@
 // /api/truelayer-callback.js
-import axios from 'axios';
+import axios from 'axios/dist/node/axios.cjs';
 
 
 // This is the main handler for the Vercel Serverless Function
