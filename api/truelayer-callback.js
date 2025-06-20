@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
   
   // The redirect URI must still match what's in the TrueLayer console
-  const rootUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8000';
+  const rootUrl = process.env.GATSBY_VERCEL_URL ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
   const redirectUri = `${rootUrl}/api/truelayer-callback`;
 
   const params = new URLSearchParams();
