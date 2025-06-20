@@ -17,7 +17,7 @@ const ConnectBankButton = () => {
       return "#"; 
     }
 
-    const authUrl = new URL('https://auth.truelayer.com/');
+    const authUrl = new URL('https://auth.truelayer-sandbox.com/');
     authUrl.searchParams.append('response_type', 'code');
     // CORRECTED: Used camelCase `searchParams` instead of `search_params`.
     authUrl.searchParams.append('client_id', clientId);
