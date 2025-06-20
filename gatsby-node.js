@@ -1,10 +1,12 @@
-// gatsby-node.js (ESM-compatible)
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 export const createPages = async ({ actions }) => {
   const { createPage } = actions;
 
   createPage({
     path: "/using-dsg",
-    component: new URL("./src/templates/using-dsg.js", import.meta.url).pathname,
+    component: require.resolve("./src/templates/using-dsg.js"),
     context: {},
     defer: true,
   });
