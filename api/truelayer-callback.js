@@ -12,7 +12,8 @@ export default async function handler(req, res) {
   }
 
   // 2. Prepare to exchange the 'code' for an 'access_token'
-  const tokenUrl = 'https://auth.truelayer.com/connect/token';
+  const tokenUrl = 'https://auth.truelayer-sandbox.com/connect/token';
+
   
   // Get your secrets from Vercel Environment Variables (no change here)
   const clientId = process.env.TRUELAYER_CLIENT_ID;
