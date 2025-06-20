@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ConnectBankButton = () => {
-  const authLink = process.env.AUTH_URL;
+  const authLink = process.env.GATSBY_AUTH_URL;
 
   if (!authLink) {
     console.error("GATSBY_AUTH_URL is not configured.");
