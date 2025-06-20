@@ -1,18 +1,11 @@
-/**
- * Implement Gatsby's Node APIs in this file.
- *
- * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/
- */
+// gatsby-node.js (ESM-compatible)
+export const createPages = async ({ actions }) => {
+  const { createPage } = actions;
 
-/**
- * @type {import('gatsby').GatsbyNode['createPages']}
- */
-exports.createPages = async ({ actions }) => {
-  const { createPage } = actions
   createPage({
     path: "/using-dsg",
-    component: require.resolve("./src/templates/using-dsg.js"),
+    component: new URL("./src/templates/using-dsg.js", import.meta.url).pathname,
     context: {},
     defer: true,
-  })
-}
+  });
+};
