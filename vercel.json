@@ -1,0 +1,9 @@
+{
+  "$schema": "https://bankvizz.vercel.app/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/truelayer-callback",
+      "destination": "/api/truelayer/callback"
+    }
+  ]
+}
