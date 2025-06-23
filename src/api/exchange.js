@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  // === FIX #1: Now we only accept GET requests ===
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
+
 
   // === FIX #2: Get the code from the query string, not the body ===
   const { code } = req.query;
