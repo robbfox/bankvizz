@@ -1,43 +1,43 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/layout";
 import Seo from "../components/seo";
-
-import LiveDashboard from "../components/LiveDashboard";
-import AIAnalysis from "../components/AIAnalysis";
 import WelcomeScreen from "../components/WelcomeScreen";
+import LiveDashboard from "../components/LiveDashboard";
 
-
-
-const IndexPage = () => {
+const IndexPage = ({ location }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleLogout = () => { /* ... */ };
+  const handleLogout = () => {
+    localStorage.removeItem('bankvizz_access_token');
+    setAccessToken(null);
+  };
 
-  // The useEffect hook is now very simple.
+  // This useEffect will run whenever the URL query string changes
   useEffect(() => {
+    // First, check for a token from a previous session
     const savedToken = localStorage.getItem('bankvizz_access_token');
     if (savedToken) {
       setAccessToken(savedToken);
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
-  }, []); 
 
-    // If no saved token, check the URL's search parameters using the `location` prop
+    // If no saved token, check the URL for a new one from the redirect
     const searchParams = new URLSearchParams(location.search);
     const tokenFromUrl = searchParams.get('token');
     
     if (tokenFromUrl) {
-      console.log("Found token in URL. Saving to localStorage...");
       setAccessToken(tokenFromUrl);
       localStorage.setItem('bankvizz_access_token', tokenFromUrl);
-      
-      // Clean up the URL for a better user experience
+      // Clean the token from the URL bar for a better user experience
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     
     setIsLoading(false);
-  }, [location.search]); // <-- This tells React to re-run the effect when the query string changes!
+  }, [location.search]);
+
+  // --- Render Logic ---
 
   if (isLoading) {
     return (
@@ -50,27 +50,24 @@ const IndexPage = () => {
   return (
     <Layout>
       <Seo title="Home" />
+      
+      {/* === THIS IS THE CLEANED-UP CONDITIONAL BLOCK === */}
       {!accessToken ? (
-        <>
-         
-          <WelcomeScreen />
-        </>
+        // If the user is logged OUT, show the welcome screen.
+        <WelcomeScreen />
       ) : (
+        // If the user is logged IN, show the dashboard and logout button.
         <>
-          <h1>Welcome to Your Financial Dashboard</h1>
-          <p>Your bank is connected. You can now view your live financial data.</p>
-        </>
-      )}
-      {accessToken && (
-        <>
-        <LiveDashboard accessToken={accessToken}
-        onTokenExpired={handleLogout} 
-         />
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
-   
-
+          <button 
+            onClick={handleLogout} 
+            style={{ float: 'right', padding: '0.5rem 1rem', cursor: 'pointer', zIndex: 10, position: 'relative' }}
+          >
+            Disconnect Bank
+          </button>
+          <LiveDashboard 
+            accessToken={accessToken} 
+            onTokenExpired={handleLogout} 
+          />
         </>
       )}
     </Layout>
