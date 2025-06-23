@@ -1,49 +1,45 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  // ... (all the code to get the token is the same)
-  console.log("API function using Client ID:", process.env.TRUELAYER_CLIENT_ID);
-   if (!req || !req.query) {
-    return; // Just stop the function immediately.
+  // This is the bulletproof guard clause to prevent build-time crashes.
+  // It checks if it's a real request before doing anything.
+  if (!req || !req.query || !res) {
+    return; 
   }
+
   const { code } = req.query;
 
-  const isProduction = !!process.env.GATSBY_VERCEL_URL;
-  const rootUrl = isProduction ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
-  const redirectUriForApi = `${rootUrl}/api/truelayer-callback`;
+  if (!code) {
+    return res.status(400).send('Authorization code is missing.');
+  }
+
   const tokenUrl = 'https://auth.truelayer.com/connect/token';
   const clientId = process.env.TRUELAYER_CLIENT_ID;
   const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
+  
+  const redirectUri = req.headers.host.includes('localhost')
+    ? 'http://localhost:8000/api/truelayer-callback'
+    : 'https://bankvizz.vercel.app/api/truelayer-callback';
 
   const params = new URLSearchParams();
   params.append('grant_type', 'authorization_code');
   params.append('client_id', clientId);
   params.append('client_secret', clientSecret);
-  params.append('redirect_uri', redirectUriForApi);
+  params.append('redirect_uri', redirectUri);
   params.append('code', code);
 
   try {
-    const response = await axios.post(tokenUrl, params, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-    
+    const response = await axios.post(tokenUrl, params);
     const accessToken = response.data.access_token;
-
-    // =================================================================
-    // === THE FIX IS HERE ===
-    // We are now redirecting to the homepage with a standard query parameter `?token=...`
-    // This is much more stable than using a URL hash.
-    // =================================================================
-    const frontendUrl = `/?token=${accessToken}`;
     
-    res.writeHead(302, { Location: frontendUrl });
+    // Redirect to the homepage with the token in the query string.
+    res.writeHead(302, { Location: `/?token=${accessToken}` });
     res.end();
 
   } catch (error) {
-    // ... (error handling is the same)
-    console.error('Failed to exchange token:', error.response ? error.response.data : error.message);
-    const errorMessage = error.response ? JSON.stringify(error.response.data) : error.message;
-    res.writeHead(302, { Location: `/?status=error&message=${encodeURIComponent(errorMessage)}` });
+    const errorMsg = error.response ? JSON.stringify(error.response.data) : error.message;
+    console.error('Final token exchange failed:', errorMsg);
+    res.writeHead(302, { Location: `/?status=error&message=${encodeURIComponent(errorMsg)}` });
     res.end();
   }
 }

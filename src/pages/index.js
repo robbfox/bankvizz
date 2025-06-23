@@ -4,7 +4,7 @@ import Seo from "../components/seo";
 import WelcomeScreen from "../components/WelcomeScreen";
 import LiveDashboard from "../components/LiveDashboard";
 
-const IndexPage = () => {
+const IndexPage = ({ location }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -13,14 +13,26 @@ const IndexPage = () => {
     setAccessToken(null);
   };
 
-  // The useEffect hook is now very simple.
+  // This robust useEffect handles the token logic perfectly.
   useEffect(() => {
     const savedToken = localStorage.getItem('bankvizz_access_token');
     if (savedToken) {
       setAccessToken(savedToken);
+      setIsLoading(false);
+      return;
     }
+
+    const searchParams = new URLSearchParams(location.search);
+    const tokenFromUrl = searchParams.get('token');
+    
+    if (tokenFromUrl) {
+      setAccessToken(tokenFromUrl);
+      localStorage.setItem('bankvizz_access_token', tokenFromUrl);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
     setIsLoading(false);
-  }, []); // It only needs to run once when the page loads.
+  }, [location.search]);
 
   if (isLoading) {
     return <Layout><Seo title="Home" /><p>Loading...</p></Layout>;
