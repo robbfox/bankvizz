@@ -1,24 +1,24 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  // This function only accepts POST requests from our front-end
-  if (req.method !== 'POST') {
+  // === FIX #1: Now we only accept GET requests ===
+  if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { code } = req.body;
+  // === FIX #2: Get the code from the query string, not the body ===
+  const { code } = req.query;
 
   if (!code) {
     return res.status(400).json({ error: 'Authorization code not provided.' });
   }
 
+  // The rest of the logic is exactly the same
   const tokenUrl = 'https://auth.truelayer.com/connect/token';
   const clientId = process.env.TRUELAYER_CLIENT_ID;
   const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
-  
-  // The redirect_uri here MUST MATCH what's in your main auth URL
-  const redirectUri = process.env.GATSBY_VERCEL_URL 
-    ? `https://${process.env.GATSBY_VERCEL_URL}/auth-callback` 
+  const redirectUri = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}/auth-callback` 
     : 'http://localhost:8000/auth-callback';
 
   const params = new URLSearchParams();
@@ -33,7 +33,6 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
     
-    // Send the access token back to the front-end page
     res.status(200).json({ accessToken: response.data.access_token });
 
   } catch (error) {
