@@ -1,39 +1,24 @@
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { navigate } from 'gatsby';
 
-export default async function handler(req, res) {
-      if (!req.query) {
-    return res.status(200).send('Build-time invocation, skipping.');
-  }
-  // ... (all the logic to get the code and prepare params is the same)
-  const { code } = req.query;
-  const tokenUrl = 'https://auth.truelayer.com/connect/token';
-  const clientId = process.env.TRUELAYER_CLIENT_ID;
-  const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
-  const rootUrl = process.env.GATSBY_VERCEL_URL ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
-  const redirectUriForApi = `${rootUrl}/api/truelayer-callback`;
+const AuthCallbackPage = ({ location }) => {
+  useEffect(() => {
+    // Look for '?token=' in the URL from the server redirect
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get('token');
 
-  const params = new URLSearchParams();
-  params.append('grant_type', 'authorization_code');
-  params.append('client_id', clientId);
-  params.append('client_secret', clientSecret);
-  params.append('redirect_uri', redirectUriForApi);
-  params.append('code', code);
-  
-  try {
-    const response = await axios.post(tokenUrl, params, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
-    const accessToken = response.data.access_token;
-
-    // =================================================================
-    // === THE CRITICAL FIX ===
-    // Redirect to our dedicated front-end page with the token.
-    // DO NOT redirect to the homepage ('/').
-    // =================================================================
-    const frontendCallbackUrl = `/auth-callback/?token=${accessToken}`;
+    if (token) {
+      // If a token is found, save it to the one place our app looks
+      localStorage.setItem('bankvizz_access_token', token);
+    }
     
-    res.writeHead(302, { Location: frontendCallbackUrl });
-    res.end();
+    // Immediately navigate to the homepage.
+    navigate('/');
 
-  } catch (error) {
-    // ... (error handling is the same)
-  }
-}
+  }, [location.search]);
+
+  // This is what the user sees for a split second
+  return <p>Please wait, completing authentication...</p>;
+};
+
+export default AuthCallbackPage;
