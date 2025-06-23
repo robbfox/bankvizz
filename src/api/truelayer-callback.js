@@ -9,8 +9,8 @@ export default async function handler(req, res) {
     return res.status(400).send('Error: No authorization code received.');
   }
 
-  const isProduction = !!process.env.VERCEL_URL;
-  const rootUrl = isProduction ? `https://${process.env.VERCEL_URL}` : 'http://localhost:8000';
+  const isProduction = !!process.env.GATSBY_VERCEL_URL;
+  const rootUrl = isProduction ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
   const redirectUriForApi = `${rootUrl}/api/truelayer-callback`;
   const tokenUrl = 'https://auth.truelayer.com/connect/token';
   const clientId = process.env.TRUELAYER_CLIENT_ID;
