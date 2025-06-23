@@ -1,16 +1,26 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/truelayer-callback",
-      "destination": "/api/truelayer-callback"
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     },
     {
-      "source": "/api/get-transactions",
-      "destination": "/api/get-transactions"
+      "src": "package.json",
+      "use": "@vercel/gatsby",
+      "config": {
+        "distDir": "public"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
-      "source": "/api/get-ai-analysis",
-      "destination": "/api/get-ai-analysis"
+      "src": "/(.*)",
+      "dest": "/$1"
     }
   ]
 }
