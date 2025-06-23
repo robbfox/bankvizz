@@ -1,64 +1,85 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/layout";
 import Seo from "../components/seo";
-import ConnectBankButton from "../components/ConnectBankButton";
-import Dashboard from "../components/Dashboard"; // Your original static dashboard
-import LiveDashboard from "../components/LiveDashboard"; // The new live dashboard
 
-const IndexPage = () => {
+import LiveDashboard from "../components/LiveDashboard";
+import AIAnalysis from "../components/AIAnalysis";
+import WelcomeScreen from "../components/WelcomeScreen";
+
+// === CHANGE 1: Accept the `location` prop from Gatsby ===
+const IndexPage = ({ location }) => {
   const [accessToken, setAccessToken] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const handleLogout = () => {
+    console.log("Logging out: clearing token from state and localStorage.");
+    localStorage.removeItem('bankvizz_access_token');
+    setAccessToken(null);
+  };
 
+  // === CHANGE 2: Add `location.search` to the dependency array ===
   useEffect(() => {
-    // This runs once on page load to check for a token
-    
-    // Check for a token saved in localStorage first
+    console.log("Homepage useEffect is running because the URL changed.");
+    console.log("Current URL search string:", location.search);
+
+    // First, check localStorage for a saved token from a previous session
     const savedToken = localStorage.getItem('bankvizz_access_token');
     if (savedToken) {
+      console.log("Found token in localStorage.");
       setAccessToken(savedToken);
-      return; // Stop here if we found a saved token
+      setIsLoading(false);
+      return; 
     }
 
-    // If no saved token, check the URL fragment from the redirect
-    const hash = window.location.hash;
-    const searchParams = new URLSearchParams(window.location.search);
-    const status = searchParams.get('status');
-
-    if (status) {
-      setConnectionStatus(status);
-      // Clean up the URL so the status message doesn't stay on refresh
+    // If no saved token, check the URL's search parameters using the `location` prop
+    const searchParams = new URLSearchParams(location.search);
+    const tokenFromUrl = searchParams.get('token');
+    
+    if (tokenFromUrl) {
+      console.log("Found token in URL. Saving to localStorage...");
+      setAccessToken(tokenFromUrl);
+      localStorage.setItem('bankvizz_access_token', tokenFromUrl);
+      
+      // Clean up the URL for a better user experience
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     
-    if (hash.includes('token=')) {
-      const token = hash.split('token=')[1];
-      setAccessToken(token);
-      // Save the token to localStorage for future visits
-      localStorage.setItem('bankvizz_access_token', token);
-      // Clean the token from the URL bar for security
-      window.location.hash = ''; 
-    }
-  }, []);
+    setIsLoading(false);
+  }, [location.search]); // <-- This tells React to re-run the effect when the query string changes!
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <Seo title="Home" /><p>Loading...</p>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
       <Seo title="Home" />
-      
-      {connectionStatus === 'error' && (
-        <div style={{ padding: '1rem', backgroundColor: '#ffdddd', border: '1px solid red' }}>
-          Connection failed. Please try again.
-        </div>
-      )}
-      
       {!accessToken ? (
         <>
-          <ConnectBankButton />
-          <Dashboard /> 
+         
+          <WelcomeScreen />
         </>
       ) : (
-        <LiveDashboard accessToken={accessToken} />
+        <>
+          <h1>Welcome to Your Financial Dashboard</h1>
+          <p>Your bank is connected. You can now view your live financial data.</p>
+        </>
       )}
-      
+      {accessToken && (
+        <>
+        <LiveDashboard accessToken={accessToken}
+        onTokenExpired={handleLogout} 
+         />
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+   
+
+        </>
+      )}
     </Layout>
   );
 };

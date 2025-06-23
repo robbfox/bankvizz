@@ -28,6 +28,8 @@ export default  {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
+        name: `static`,
+        path: `${__dirname}/static`,
         name: `images`,
         path: `${__dirname}/src/images`,
       },

@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@loadable/component": "^5.16.7",
     "axios": "^1.10.0",
     "gatsby": "^5.14.1",

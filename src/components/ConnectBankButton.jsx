@@ -6,20 +6,24 @@ const ConnectBankButton = () => {
   if (!authLink) {
     console.error("GATSBY_AUTH_URL is not configured.");
     return (
-      <a className="connect-button" disabled title="Missing TrueLayer auth URL">
+      <button className="connect-button" disabled title="Missing TrueLayer auth URL">
         Connect to NatWest via TrueLayer
-      </a>
+      </button>
     );
   }
 
+  const handleClick = () => {
+    window.location.href = authLink;
+  };
+
   return (
-    <a 
-      href={authLink} 
+    <button 
+      onClick={handleClick} 
       className="connect-button" 
       title="Connect to your bank"
     >
       Connect to NatWest via TrueLayer
-    </a>
+    </button>
   );
 };
 

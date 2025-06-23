@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import loadable from '@loadable/component';
+import AIAnalysis from './AIAnalysis';
+import * as styles from './LiveDashboard.module.css';    
 
 const Plot = loadable(() => import('react-plotly.js'));
+
+
 
 // 1. Categorization Logic (Translated to JavaScript)
 const CATEGORY_KEYWORDS = {
@@ -50,17 +54,16 @@ const getStartOfWeek = (date) => {
   return new Date(d.setDate(diff)).toISOString().split('T')[0];
 };
 
-const LiveDashboard = ({ accessToken }) => {
+const LiveDashboard = ({ accessToken, onTokenExpired }) => {
   const [chartData, setChartData] = useState(null);
+  const [processedTransactions, setProcessedTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const isMobile = width < 768;
 
   useEffect(() => {
-    if (!accessToken) {
-      setError("Access Token is missing.");
-      setIsLoading(false);
-      return;
-    }
+    if (!accessToken) return;
 
     const fetchData = async () => {
       try {
@@ -68,12 +71,22 @@ const LiveDashboard = ({ accessToken }) => {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
 
+        // === CATCH THE EXPIRED TOKEN ERROR HERE ===
+        if (response.status === 401) {
+          console.log("Token is expired or invalid. Logging out.");
+          onTokenExpired(); // Call the parent's logout function
+          return; // Stop processing further
+        }
+        // =========================================
+
         if (!response.ok) {
           const errData = await response.json();
           throw new Error(errData.details?.error_description || 'Failed to fetch transactions');
         }
         
         const rawTxs = await response.json();
+
+  
 
         // 2. Data Processing (JavaScript equivalent of your Pandas script)
         const processedTxs = rawTxs.map(tx => ({
@@ -86,7 +99,8 @@ const LiveDashboard = ({ accessToken }) => {
         const spendingTxs = processedTxs
           .filter(tx => tx.value < 0 && tx.category !== 'Rent/Transfer')
           .map(tx => ({ ...tx, spending: Math.abs(tx.value) }));
-        
+          
+        setProcessedTransactions(spendingTxs);
         // Aggregation: Weekly Spending (like .resample())
         const weeklySpending = spendingTxs.reduce((acc, tx) => {
           const weekStart = getStartOfWeek(tx.date);
@@ -130,7 +144,7 @@ const LiveDashboard = ({ accessToken }) => {
     };
 
     fetchData();
-  }, [accessToken]);
+  }, [accessToken, onTokenExpired]);
 
   if (isLoading) return <div><p>Loading live financial data...</p><p>This may take a moment.</p></div>;
   if (error) return <div><p>Error loading live data:</p><p style={{color: 'red'}}>{error}</p></div>;
@@ -138,48 +152,57 @@ const LiveDashboard = ({ accessToken }) => {
 
   // 3. Chart Rendering (Using react-plotly.js)
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-title"><h1>My Live Financial Dashboard</h1></div>
-      <Plot
-        data={[
-          {
-            ...chartData.line,
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: 'Weekly Spending',
-            xaxis: 'x',
-            yaxis: 'y'
-          },
-          {
-            ...chartData.pie,
-            type: 'pie',
-            name: 'Categories',
-            domain: { row: 1, column: 0 },
-          },
-          {
-            ...chartData.bar,
-            type: 'bar',
-            orientation: 'h',
-            name: 'Top Categories',
-            xaxis: 'x2',
-            yaxis: 'y2'
-          }
-        ]}
-        layout={{
-          title: 'Live Spending Analysis',
-          grid: { rows: 2, columns: 2, pattern: 'independent' },
-          height: 800,
-          template: 'plotly_white',
-          showlegend: false,
-          yaxis: { title: 'Weekly Spending', tickprefix: '£' },
-          yaxis2: { autorange: 'reversed' },
-          xaxis2: { title: 'Total Spending', tickprefix: '£' }
-        }}
-        config={{ responsive: true }}
-        className="full-width-chart"
-      />
+    <div className={styles.dashboardContainer}>
+      <div className={styles.dashboardTitle}>
+        <h1>My Live Financial Dashboard</h1>
+      </div>
+
+      <div className={styles.dashboardGrid}>
+        
+        {/* Card 1: Line Chart */}
+        <div className={`${styles.chartCard} ${styles.fullWidthCard}`}>
+          <h2>Weekly Spending</h2>
+          <Plot
+            data={[{ ...chartData.line, type: 'scatter', mode: 'lines+markers' }]}
+            layout={{ yaxis: { tickprefix: '£' }, margin: { l: 40, r: 20, t: 40, b: 40 } }}
+            config={{ responsive: true }}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+
+        {/* Card 2: Pie Chart */}
+        <div className={styles.chartCard}>
+          <h2>Category Breakdown</h2>
+          <Plot
+            data={[{ ...chartData.pie, type: 'pie', textinfo: 'label+percent', insidetextorientation: 'radial' }]}
+            layout={{ showlegend: isMobile ? false : true, margin: { l: 20, r: 20, t: 40, b: 20 } }}
+            config={{ responsive: true }}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+        
+        {/* Card 3: Bar Chart */}
+        <div className={styles.chartCard}>
+          <h2>Top Spending Categories</h2>
+          <Plot
+            data={[{ ...chartData.bar, type: 'bar', orientation: 'h' }]}
+            layout={{ yaxis: { autorange: 'reversed' }, xaxis: { tickprefix: '£' }, margin: { l: 120, r: 20, t: 40, b: 40 } }}
+            config={{ responsive: true }}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+
+      </div>
+
+      {/* The AI component, styled to look nice */}
+      <div className={styles.aiContainer}>
+        {processedTransactions.length > 0 ? (
+          <AIAnalysis transactionData={processedTransactions} />
+        ) : (
+          <p>No spending data available for AI analysis.</p>
+        )}
+      </div>
     </div>
   );
 };
-
 export default LiveDashboard;

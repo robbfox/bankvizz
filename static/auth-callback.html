@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Authenticating...</title>
+</head>
+<body>
+  <p>Please wait, completing authentication...</p>
+
+  <script>
+    // This vanilla JS runs immediately, before any framework.
+    try {
+      const hash = window.location.hash;
+      if (hash.includes('token=')) {
+        const token = hash.split('token=')[1];
+        // Save the token to the one place our main app will look.
+        localStorage.setItem('bankvizz_access_token', token);
+      }
+    } catch (e) {
+      // In case of any error, do nothing and proceed.
+      console.error("Error processing auth token:", e);
+    } finally {
+      // Whether a token was found or not, immediately redirect to the homepage.
+      window.location.href = '/';
+    }
+  </script>
+
+</body>
+</html>
