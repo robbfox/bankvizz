@@ -17,8 +17,8 @@ export default async function handler(req, res) {
   const tokenUrl = 'https://auth.truelayer.com/connect/token';
   const clientId = process.env.TRUELAYER_CLIENT_ID;
   const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
-  const redirectUri = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}/auth-callback` 
+  const redirectUri = process.env.GATSBY_VERCEL_URL 
+    ? `https://${process.env.GATSBY_VERCEL_URL}/auth-callback` 
     : 'http://localhost:8000/auth-callback';
 
   const params = new URLSearchParams();
