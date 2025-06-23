@@ -1,44 +1,27 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  // ... (all the code to get the token is the same)
-  console.log("API function using Client ID:", process.env.TRUELAYER_CLIENT_ID);
+  // ... (all the logic to get the code and prepare params is the same)
   const { code } = req.query;
-
-  if (!code) {
-    return res.status(400).send('Error: No authorization code received.');
-  }
-
-  const isProduction = !!process.env.GATSBY_VERCEL_URL;
-  const rootUrl = isProduction ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
-  const redirectUriForApi = `${rootUrl}/api/truelayer-callback`;
+  // ...
   const tokenUrl = 'https://auth.truelayer.com/connect/token';
-  const clientId = process.env.TRUELAYER_CLIENT_ID;
-  const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
-
-  const params = new URLSearchParams();
-  params.append('grant_type', 'authorization_code');
-  params.append('client_id', clientId);
-  params.append('client_secret', clientSecret);
-  params.append('redirect_uri', redirectUriForApi);
-  params.append('code', code);
-
+  // ...
+  
   try {
-    const response = await axios.post(tokenUrl, params, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
-    
+    const response = await axios.post(tokenUrl, params, { /* ... */ });
     const accessToken = response.data.access_token;
 
     // =================================================================
-    // === THE FIX IS HERE ===
-    // We are now redirecting to the homepage with a standard query parameter `?token=...`
-    // This is much more stable than using a URL hash.
+    // === THE CRITICAL FIX ===
+    // Redirect to our dedicated front-end page with the token.
+    // DO NOT redirect to the homepage ('/').
     // =================================================================
-    const frontendUrl = `/?token=${accessToken}`;
+    const frontendCallbackUrl = `/auth-callback/?token=${accessToken}`;
     
-    res.writeHead(302, { Location: frontendUrl });
+    res.writeHead(302, { Location: frontendCallbackUrl });
     res.end();
+
+
 
   } catch (error) {
     // ... (error handling is the same)
