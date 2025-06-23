@@ -18,7 +18,8 @@
     "plotly.js": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-plotly.js": "^2.6.0"
+    "react-plotly.js": "^2.6.0",
+    "vercel": "^44.0.0"
   },
   "devDependencies": {
     "prettier": "^2.8.8"
@@ -26,8 +27,6 @@
   "keywords": [
     "gatsby"
   ],
-
-
   "license": "0BSD",
   "scripts": {
     "build": "gatsby build",
