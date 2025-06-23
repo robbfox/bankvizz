@@ -3,11 +3,10 @@ import axios from 'axios';
 export default async function handler(req, res) {
   // ... (all the code to get the token is the same)
   console.log("API function using Client ID:", process.env.TRUELAYER_CLIENT_ID);
-  const { code } = req.query;
-
-  if (!code) {
-    return res.status(400).send('Error: No authorization code received.');
+   if (!req || !req.query) {
+    return; // Just stop the function immediately.
   }
+  const { code } = req.query;
 
   const isProduction = !!process.env.GATSBY_VERCEL_URL;
   const rootUrl = isProduction ? `https://${process.env.GATSBY_VERCEL_URL}` : 'http://localhost:8000';
