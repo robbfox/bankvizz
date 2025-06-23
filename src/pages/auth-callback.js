@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
+      if (!req.query) {
+    return res.status(200).send('Build-time invocation, skipping.');
+  }
   // ... (all the logic to get the code and prepare params is the same)
   const { code } = req.query;
   const tokenUrl = 'https://auth.truelayer.com/connect/token';

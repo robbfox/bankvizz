@@ -1,61 +1,35 @@
+/* In /src/components/LiveDashboard.module.css */
+
 .dashboardContainer {
   padding: 1rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
-
 .dashboardTitle {
   text-align: center;
   margin-bottom: 2rem;
-  color: #2c3e50;
 }
-
-.chartContainer {
+.dashboardGrid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+}
+.chartCard { /* <-- The class the warning was about */
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   background-color: #ffffff;
 }
-
-.aiContainer {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border: 1px dashed #4285f4; /* Dashed border for AI section */
-  border-radius: 8px;
-  background-color: #f8f9fa;
+.fullWidthCard {
+  grid-column: 1 / -1;
 }
-/* --- Media Queries for Mobile Responsiveness --- */
 
-@media (max-width: 768px) {
-  .dashboardContainer {
-    padding: 0.5rem; /* Reduce padding on small screens */
-  }
-
-  .dashboardTitle h1 {
-    font-size: 1.8rem; /* Make title smaller */
-  }
-
-  /* 
-    This is the KEY for responsive charts. 
-    By default, Plotly's grid stacks horizontally. 
-    We need to adjust our layout for a single column view.
-    This requires a change in the `layout` prop of the Plot component.
-  */
+@media (max-width: 992px) {
+  .dashboardGrid { grid-template-columns: 1fr; }
+  .fullWidthCard { grid-column: auto; }
 }
 @media (min-width: 1600px) {
-  .dashboardContainer {
-    /* Unlock a wider container on large screens */
-    max-width: 1800px; 
-  }
-
-  .dashboardGrid {
-    /* Switch to a 3-column layout for the bottom row */
-    grid-template-columns: 1fr 1fr 1fr;
-  }
-
-  .fullWidthCard {
-    /* Make the top chart span all three new columns */
-    grid-column: 1 / -1;
-  }
+  .dashboardContainer { max-width: 1800px; }
+  .dashboardGrid { grid-template-columns: 1fr 1fr 1fr; }
 }
