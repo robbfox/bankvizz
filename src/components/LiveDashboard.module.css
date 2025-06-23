@@ -1,6 +1,7 @@
+/* --- Base Container Styles --- */
 .dashboardContainer {
   padding: 1rem;
-  max-width: 1200px;
+  max-width: 1400px; /* Default max-width for standard monitors */
   margin: 0 auto;
 }
 
@@ -10,52 +11,69 @@
   color: #2c3e50;
 }
 
-.chartContainer {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  background-color: #ffffff;
-}
-
+/* --- Grid Layout --- */
 .dashboardGrid {
   display: grid;
   gap: 1.5rem;
+  /* Default to a 2-column layout on standard screens */
   grid-template-columns: 1fr 1fr;
 }
-.chartCard { /* <-- The class the warning was about */
+
+/* --- Card Styling (Used for all charts and AI box) --- */
+.chartCard {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   background-color: #ffffff;
+  display: flex; /* Helps align content inside the card */
+  flex-direction: column;
 }
+
+.chartCard h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #34495e;
+}
+
+/* A special class for the top card to make it span the full width */
 .fullWidthCard {
   grid-column: 1 / -1;
 }
 
-@media (max-width: 992px) {
-  .dashboardGrid { grid-template-columns: 1fr; }
-  .fullWidthCard { grid-column: auto; }
-}
-@media (min-width: 1600px) {
-  .dashboardContainer { max-width: 1800px; }
-  .dashboardGrid { grid-template-columns: 1fr 1fr 1fr; }
-}
-.aiContainer {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border: 1px dashed #4285f4; /* Dashed border for AI section */
-  border-radius: 8px;
-  background-color: #f8f9fa;
-}
-/* --- Media Queries for Mobile Responsiveness --- */
+/* ========================================================= */
+/* === RESPONSIVE STYLES (from Widescreen down to Mobile) === */
+/* ========================================================= */
 
-@media (max-width: 768px) {
+/* For Widescreen Monitors (4K, etc.) */
+@media (min-width: 1600px) {
+  .dashboardContainer {
+    max-width: 1800px; /* Allow the dashboard to be wider */
+  }
+
+  .dashboardGrid {
+    /* Switch to a 3-column layout to use the space */
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* For Tablets and Mobile Phones */
+@media (max-width: 992px) {
+  .dashboardGrid {
+    /* Stack everything in a single column */
+    grid-template-columns: 1fr;
+  }
+  
+  .fullWidthCard {
+    /* Reset the span when we are in a single column */
+    grid-column: auto;
+  }
+
   .dashboardContainer {
     padding: 0.5rem; /* Reduce padding on small screens */
   }
-    .dashboardTitle {
-        font-size: 1.5rem; /* Smaller title on mobile */
-    }
+
+  .dashboardTitle h1 {
+    font-size: 1.8rem; /* Make title smaller on mobile */
+  }
 }

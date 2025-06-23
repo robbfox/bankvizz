@@ -4,6 +4,7 @@ import { navigate } from 'gatsby';
 const AuthCallbackPage = ({ location }) => {
   const [status, setStatus] = useState('Initializing...');
   const [error, setError] = useState(null);
+  
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -19,8 +20,13 @@ const AuthCallbackPage = ({ location }) => {
         }
 
         try {
-          const response = await fetch(`/api/exchange?code=${code}`);
-
+            
+            const response = await fetch('/api/exchange', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code }),
+                });
+                
           // === NEW, MORE ROBUST ERROR HANDLING ===
           if (!response.ok) {
             const status = response.status;

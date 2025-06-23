@@ -151,7 +151,7 @@ const LiveDashboard = ({ accessToken, onTokenExpired }) => {
   if (!chartData) return <div>No chart data available.</div>;
 
   // 3. Chart Rendering (Using react-plotly.js)
-  return (
+   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.dashboardTitle}>
         <h1>My Live Financial Dashboard</h1>
@@ -159,14 +159,14 @@ const LiveDashboard = ({ accessToken, onTokenExpired }) => {
 
       <div className={styles.dashboardGrid}>
         
-        {/* Card 1: Line Chart */}
+        {/* Card 1: Line Chart (spans all columns) */}
         <div className={`${styles.chartCard} ${styles.fullWidthCard}`}>
           <h2>Weekly Spending</h2>
           <Plot
             data={[{ ...chartData.line, type: 'scatter', mode: 'lines+markers' }]}
             layout={{ yaxis: { tickprefix: '£' }, margin: { l: 40, r: 20, t: 40, b: 40 } }}
             config={{ responsive: true }}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', minHeight: '350px' }}
           />
         </div>
 
@@ -175,9 +175,9 @@ const LiveDashboard = ({ accessToken, onTokenExpired }) => {
           <h2>Category Breakdown</h2>
           <Plot
             data={[{ ...chartData.pie, type: 'pie', textinfo: 'label+percent', insidetextorientation: 'radial' }]}
-            layout={{ showlegend: isMobile ? false : true, margin: { l: 20, r: 20, t: 40, b: 20 } }}
+            layout={{ showlegend: false, margin: { l: 20, r: 20, t: 40, b: 20 } }}
             config={{ responsive: true }}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', minHeight: '350px' }}
           />
         </div>
         
@@ -188,21 +188,22 @@ const LiveDashboard = ({ accessToken, onTokenExpired }) => {
             data={[{ ...chartData.bar, type: 'bar', orientation: 'h' }]}
             layout={{ yaxis: { autorange: 'reversed' }, xaxis: { tickprefix: '£' }, margin: { l: 120, r: 20, t: 40, b: 40 } }}
             config={{ responsive: true }}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%', minHeight: '350px' }}
           />
         </div>
 
-      </div>
-
-      {/* The AI component, styled to look nice */}
-      <div className={styles.aiContainer}>
-        {processedTransactions.length > 0 ? (
-          <AIAnalysis transactionData={processedTransactions} />
-        ) : (
-          <p>No spending data available for AI analysis.</p>
-        )}
+        {/* Card 4: AI Analysis (now part of the grid) */}
+        <div className={styles.chartCard}>
+          {processedTransactions.length > 0 ? (
+            <AIAnalysis transactionData={processedTransactions} />
+          ) : (
+            <p>No spending data available for AI analysis.</p>
+          )}
+        </div>
+        
       </div>
     </div>
   );
 };
+
 export default LiveDashboard;
