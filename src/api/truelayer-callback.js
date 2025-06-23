@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
   const tokenUrl = 'https://auth.truelayer.com/connect/token';
   const clientId = process.env.GATSBY_TRUELAYER_CLIENT_ID;
-  const clientSecret = process.env.GATSBY_TRUELAYER_CLIENT_SECRET;
+  const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
   
   const redirectUri = req.headers.host.includes('localhost')
     ? 'http://localhost:8000/api/truelayer-callback'
