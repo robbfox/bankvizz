@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { navigate } from 'gatsby';
 
 const AuthCallbackPage = ({ location }) => {
-  const [status, setStatus] = = useState('Initializing...');
+  const [status, setStatus] = useState('Initializing...');
   const [error, setError] = useState(null);
 
   useEffect(() => {
