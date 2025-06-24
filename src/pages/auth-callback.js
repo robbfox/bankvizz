@@ -1,3 +1,11 @@
+import React, { useEffect, useState } from 'react';
+import { navigate } from 'gatsby';
+
+// A simple component to show a loading/status message
+const AuthCallbackPage = ({ location }) => {
+  const [statusMessage, setStatusMessage] = useState('Completing secure connection, please wait...');
+  const [error, setError] = useState(null);
+
 // in src/pages/auth-callback.js
 
 useEffect(() => {
@@ -45,3 +53,15 @@ useEffect(() => {
     setError('Authorization code not found in URL.');
   }
 }, [location.search]);
+
+  // Render a user-friendly status screen
+  return (
+    <div style={{ padding: '4rem', textAlign: 'center' }}>
+      <h1>{statusMessage}</h1>
+      {error && <p style={{ color: 'red', marginTop: '1rem' }}>Details: {error}</p>}
+      {error && <button onClick={() => navigate('/')}>Return to Homepage</button>}
+    </div>
+  );
+};
+
+export default AuthCallbackPage;
