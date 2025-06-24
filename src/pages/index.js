@@ -1,57 +1,57 @@
-import React, { useState, useEffect } from "react";
-import Layout from "../components/layout";
-import Seo from "../components/seo";
-import WelcomeScreen from "../components/WelcomeScreen";
-import LiveDashboard from "../components/LiveDashboard";
+import React, { useState, useEffect } from 'react';
 
-const IndexPage = ({ location }) => {
+// Import the two screens we can show the user
+import WelcomeScreen from '../components/WelcomeScreen';
+import LiveDashboard from '../components/LiveDashboard';
+
+// This is the main "controller" for your app's homepage.
+const IndexPage = () => {
+  // 1. We need a state to hold the access token. It starts as null.
   const [accessToken, setAccessToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Add a loading state
 
+  // 2. This runs ONCE when the page loads, to check for an existing session.
+  useEffect(() => {
+    // Look in the browser's session storage for our token.
+    const storedToken = sessionStorage.getItem('bankvizz_token');
+    
+    if (storedToken) {
+      console.log("Found token in session storage. Preparing to show dashboard.");
+      setAccessToken(storedToken); // If we find it, put it in our state.
+    } else {
+      console.log("No token found. Showing welcome screen.");
+    }
+    
+    // We are done checking, so we can stop showing the loading message.
+    setIsLoading(false);
+  }, []); // The empty `[]` means this effect runs only on the initial render.
+
+  // 3. This function will handle logging out or if the token expires.
   const handleLogout = () => {
-    localStorage.removeItem('bankvizz_access_token');
-    setAccessToken(null);
+    console.log("Logging out: removing token from state and storage.");
+    sessionStorage.removeItem('bankvizz_token');
+    setAccessToken(null); // Clear the token from our state.
   };
 
-  // This robust useEffect handles the token logic perfectly.
-  useEffect(() => {
-    const savedToken = localStorage.getItem('bankvizz_access_token');
-    if (savedToken) {
-      setAccessToken(savedToken);
-      setIsLoading(false);
-      return;
-    }
-
-    const searchParams = new URLSearchParams(location.search);
-    const tokenFromUrl = searchParams.get('token');
-    
-    if (tokenFromUrl) {
-      setAccessToken(tokenFromUrl);
-      localStorage.setItem('bankvizz_access_token', tokenFromUrl);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-    
-    setIsLoading(false);
-  }, [location.search]);
-
+  // While we are checking for the token, show a brief loading message.
   if (isLoading) {
-    return <Layout><Seo title="Home" /><p>Loading...</p></Layout>;
+    return <div>Loading...</div>;
   }
 
+  // 4. This is the core logic: Conditional Rendering.
   return (
-    <Layout>
-      <Seo title="Home" />
-      {!accessToken ? (
-        <WelcomeScreen />
+    <main>
+      {/* If the `accessToken` state has a value, render the Dashboard. */}
+      {/* Otherwise, render the Welcome Screen. */}
+      {accessToken ? (
+        <LiveDashboard 
+          accessToken={accessToken} 
+          onTokenExpired={handleLogout} 
+        />
       ) : (
-        <>
-          <button onClick={handleLogout} style={{ float: 'right', padding: '0.5rem 1rem', cursor: 'pointer', zIndex: 10, position: 'relative' }}>
-            Disconnect Bank
-          </button>
-          <LiveDashboard accessToken={accessToken} onTokenExpired={handleLogout} />
-        </>
+        <WelcomeScreen />
       )}
-    </Layout>
+    </main>
   );
 };
 

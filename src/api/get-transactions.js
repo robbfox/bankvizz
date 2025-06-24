@@ -1,63 +1,57 @@
-// src/api/exchange.js
+// src/api/get-transactions.js
+
+import axios from 'axios';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+  console.log(`\n--- Initiating /api/get-transactions with method: ${req.method} ---`);
+
+  // A GET request is for fetching data. This is the correct method.
+  // We add this check to be explicit and prevent other methods from being used.
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+  }
+  
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    console.error("Error: Authorization header is missing or malformed.");
+    return res.status(401).json({ error: 'Unauthorized: No token provided.' });
   }
 
-  // --- VERCEL ENVIRONMENT DEBUGGER ---
-  console.log("\n--- VERCEL DEBUGGER for /api/exchange ---");
+  const accessToken = authHeader.split(' ')[1];
+  const accountsUrl = 'https://api.truelayer.com/data/v1/accounts';
 
-  // Log all relevant Vercel environment variables
-  console.log("process.env.VERCEL_URL:", process.env.VERCEL_URL);
-  console.log("process.env.VERCEL_BRANCH_URL:", process.env.VERCEL_BRANCH_URL);
-  console.log("process.env.VERCEL_ENV:", process.env.VERCEL_ENV);
-  console.log("process.env.URL:", process.env.URL); // Another Vercel alias for the deployment URL
+  try {
+    console.log("Step 1: Fetching accounts...");
+    const accountsResponse = await axios.get(accountsUrl, {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+    });
 
-  // --- CONSTRUCT THE REDIRECT URI ---
-  // Let's use the most reliable variable: `VERCEL_URL` is for the main site URL.
-  // `URL` is the canonical URL for THIS specific deployment (best for previews).
-  const deploymentUrl = process.env.URL || `http://localhost:8000`;
-  const redirectUri = deploymentUrl.startsWith('http') 
-    ? `${deploymentUrl}/auth-callback`
-    : `https://${deploymentUrl}/auth-callback`;
-
-  console.log("\n--- CONSTRUCTED URI ---");
-  console.log("Final derived redirect_uri:", redirectUri);
-  
-  // --- END OF DEBUGGING ---
-
-  // For this test, we will not call TrueLayer. We will just return the
-  // URI we constructed so you can see it in your browser's network tab.
-  // This helps confirm the frontend is calling this function correctly.
-  return res.status(418).json({
-    message: "This is a debug response. Check your Vercel function logs.",
-    derivedRedirectUri: redirectUri,
-    vercelEnv: process.env.VERCEL_ENV,
-    vercelUrl: process.env.URL,
-  });
-
-  // The rest of your original code is temporarily commented out below
-  /*
-    const { code } = req.body;
-    const clientId = process.env.TRUELAYER_CLIENT_ID;
-    const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
-
-    if (!clientId || !clientSecret) {
-      // ... error handling
+    if (accountsResponse.data.results.length === 0) {
+      console.warn("Warning: No accounts found for this user.");
+      return res.status(404).json({ error: 'No accounts found for this token.' });
     }
+    
+    const accountId = accountsResponse.data.results[0].account_id;
+    console.log(`Step 2: Found account ID: ${accountId}. Fetching transactions...`);
+    
+    const transactionsUrl = `https://api.truelayer.com/data/v1/accounts/${accountId}/transactions`;
+    const transactionsResponse = await axios.get(transactionsUrl, {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+    });
+    
+    console.log("Step 3: Successfully fetched transactions. Sending to client.");
+    return res.status(200).json(transactionsResponse.data.results);
 
-    const params = new URLSearchParams();
-    params.append('grant_type', 'authorization_code');
-    params.append('client_id', clientId);
-    params.append('client_secret', clientSecret);
-    params.append('redirect_uri', redirectUri);
-    params.append('code', code);
-
-    try {
-      // ... axios call
-    } catch (error) {
-      // ... error handling
-    }
-  */
+  } catch (error) {
+    console.error("--- API Error in get-transactions ---");
+    const status = error.response?.status || 500;
+    const message = error.response?.data || 'An internal server error occurred.';
+    console.error(`Status: ${status}, Details:`, message);
+    
+    // Send the detailed error back to the frontend
+    return res.status(status).json({ 
+        error: 'Failed to fetch data from TrueLayer.', 
+        details: message 
+    });
+  }
 }
