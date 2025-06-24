@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     const prompt = `
       You are a helpful personal finance assistant named BankVizz.
       Analyze the following spending data and provide a brief, friendly summary (2-3 paragraphs) of the user's spending habits.
-      Identify the top 3 spending categories.
+      Identify the top 3 spending categories, and point out any obvious outliers or unusual spending patterns.
       Then, offer one or two actionable, encouraging, and specific pieces of advice for potential savings.
       Format your response in Markdown.
 
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     `;
 
     // --- Call the Gemini API ---
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite-preview-06-17" });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
