@@ -1,8 +1,12 @@
 /* --- Base Container Styles --- */
 .dashboardContainer {
-  padding: 1rem;
-  max-width: 1400px; /* Default max-width for standard monitors */
-  margin: 0 auto;
+  /* CHANGED: We now use padding for side spacing instead of a max-width. */
+  /* This gives it breathing room on the left and right. */
+  padding: 1.5rem 1rem; 
+  
+  /* REMOVED: These two lines were constraining the layout. */
+  /* max-width: 1400px; */
+  /* margin: 0 auto; */
 }
 
 .dashboardTitle {
@@ -47,13 +51,17 @@
 
 /* For Widescreen Monitors (4K, etc.) */
 @media (min-width: 1600px) {
+  /* REMOVED: No need to set a max-width anymore. */
+  /* .dashboardContainer { max-width: 1800px; } */
+
+  /* UPDATED: On very wide screens, we can add more side padding. */
   .dashboardContainer {
-    max-width: 1800px; /* Allow the dashboard to be wider */
+    padding: 2rem 4rem;
   }
 
   .dashboardGrid {
-    /* Switch to a 3-column layout to use the space */
-    grid-template-columns: 1fr 1fr 1fr;
+    /* Switch to a 3-column layout to use the extra space */
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -70,7 +78,8 @@
   }
 
   .dashboardContainer {
-    padding: 0.5rem; /* Reduce padding on small screens */
+    /* Reduce padding on small screens */
+    padding: 1rem;
   }
 
   .dashboardTitle h1 {

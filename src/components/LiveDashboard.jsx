@@ -174,8 +174,8 @@ const LiveDashboard = ({ accessToken, onTokenExpired }) => {
         <div className={styles.chartCard}>
           <h2>Category Breakdown</h2>
           <Plot
-            data={[{ ...chartData.pie, type: 'pie', textinfo: 'label+percent', insidetextorientation: 'radial' }]}
-            layout={{ showlegend: false, margin: { l: 20, r: 20, t: 40, b: 20 } }}
+            data={[{ ...chartData.pie, type: 'pie', textinfo: 'percent', insidetextorientation: 'radial' }]}
+            layout={{ showlegend: true, margin: { l: 20, r: 20, t: 40, b: 20 } }}
             config={{ responsive: true }}
             style={{ width: '100%', height: '100%', minHeight: '350px' }}
           />
@@ -193,7 +193,7 @@ const LiveDashboard = ({ accessToken, onTokenExpired }) => {
         </div>
 
         {/* Card 4: AI Analysis (now part of the grid) */}
-        <div className={styles.chartCard}>
+         <div className={`${styles.chartCard} ${styles.fullWidthCard}`}>
           {processedTransactions.length > 0 ? (
             <AIAnalysis transactionData={processedTransactions} />
           ) : (

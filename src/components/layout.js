@@ -1,17 +1,12 @@
-/**
- * Layout component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.com/docs/how-to/querying-data/use-static-query/
- */
+// In src/components/layout.js
 
 import * as React from "react"
 import { useStaticQuery, graphql } from "gatsby"
-
 import Header from "./header"
 import "./layout.css"
 
-const Layout = ({ children }) => {
+// Accept a new prop here, with a default value of false
+const Layout = ({ children, isFullWidth = false }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -28,21 +23,13 @@ const Layout = ({ children }) => {
       <div
         style={{
           margin: `0 auto`,
-          maxWidth: `var(--size-content)`,
+          // Use the prop to conditionally set the maxWidth
+          maxWidth: isFullWidth ? 'none' : 'var(--size-content)',
           padding: `var(--size-gutter)`,
         }}
       >
         <main>{children}</main>
-        <footer
-          style={{
-            marginTop: `var(--space-5)`,
-            fontSize: `var(--font-sm)`,
-          }}
-        >
-          © {new Date().getFullYear()} &middot; Built with
-          {` `}
-          <a href="https://www.gatsbyjs.com">Gatsby</a>
-        </footer>
+  
       </div>
     </>
   )

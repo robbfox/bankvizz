@@ -32,7 +32,7 @@ const IndexPage = () => {
   if (accessToken) {
     // If the user is logged in, show the Dashboard WITH the Layout
     return (
-      <Layout>
+      <Layout isFullWidth={true}> 
         <LiveDashboard 
           accessToken={accessToken} 
           onTokenExpired={handleLogout} 
