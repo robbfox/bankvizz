@@ -1,27 +1,19 @@
-import * as React from "react"
-import { Link } from "gatsby"
+import React from 'react';
+import * as styles from './header.module.css';
 
-const Header = ({ siteTitle }) => (
-  <header
-    style={{
-      margin: `0 auto`,
-      padding: `var(--space-4) var(--size-gutter)`,
-      display: `flex`,
-      alignItems: `center`,
-      justifyContent: `space-between`,
-    }}
-  >
-    <Link
-      to="/"
-      style={{
-        fontSize: `var(--font-sm)`,
-        textDecoration: `none`,
-      }}
-    >
+const Header = ({ siteTitle, isLoggedIn, onLogout }) => (
+  <header className={styles.headerContainer}>
+    <div className={styles.siteTitle}>
       {siteTitle}
-    </Link>
-
+    </div>
+    
+    {/* This button will only render if isLoggedIn is true */}
+    {isLoggedIn && (
+      <button onClick={onLogout} className={styles.logoutButton}>
+        Logout
+      </button>
+    )}
   </header>
-)
+);
 
-export default Header
+export default Header;

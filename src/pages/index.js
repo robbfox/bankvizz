@@ -9,40 +9,36 @@ const IndexPage = () => {
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('bankvizz_token');
-    
     if (storedToken) {
       setAccessToken(storedToken);
     }
-    
     setIsLoading(false);
   }, []);
 
   const handleLogout = () => {
+    console.log("Logging out: removing token from state and storage.");
     sessionStorage.removeItem('bankvizz_token');
     setAccessToken(null);
   };
 
   if (isLoading) {
-    // You can keep a simple loading state or make it fancier
-    return <div style={{ textAlign: 'center', padding: '5rem' }}>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
-  // This is the key change: apply the Layout conditionally.
-  // The <main> wrapper is also removed as <Layout> provides its own.
-  if (accessToken) {
-    // If the user is logged in, show the Dashboard WITH the Layout
-    return (
-      <Layout isFullWidth={true}> 
-        <LiveDashboard 
-          accessToken={accessToken} 
-          onTokenExpired={handleLogout} 
-        />
-      </Layout>
-    );
-  } else {
-    // If the user is not logged in, show the Welcome Screen WITHOUT the Layout
-    return <WelcomeScreen />;
-  }
+  return accessToken ? (
+    <Layout 
+      isFullWidth={true} 
+      isLoggedIn={true} 
+      onLogout={handleLogout}
+    >
+      <LiveDashboard 
+        accessToken={accessToken} 
+        onTokenExpired={handleLogout} 
+      />
+    </Layout>
+  ) : (
+    <WelcomeScreen />
+  );
 };
 
 export default IndexPage;

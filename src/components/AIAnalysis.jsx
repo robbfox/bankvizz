@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 const AIAnalysis = ({ transactionData }) => {
   const [analysis, setAnalysis] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +38,7 @@ const AIAnalysis = ({ transactionData }) => {
       <button onClick={handleGetAnalysis} disabled={isLoading}>
         {isLoading ? 'Generating...' : 'Get AI Spending Advice'}
       </button>
+
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
       

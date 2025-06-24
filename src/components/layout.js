@@ -1,12 +1,10 @@
-// In src/components/layout.js
-
 import * as React from "react"
 import { useStaticQuery, graphql } from "gatsby"
-import Header from "./header"
+import Header from "./header" // Make sure this import is correct
 import "./layout.css"
 
-// Accept a new prop here, with a default value of false
-const Layout = ({ children, isFullWidth = false }) => {
+// Accept the new props here
+const Layout = ({ children, isFullWidth = false, isLoggedIn = false, onLogout }) => {
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
       site {
@@ -17,22 +15,28 @@ const Layout = ({ children, isFullWidth = false }) => {
     }
   `)
 
+  const siteTitle = data.site.siteMetadata?.title || `BankViz`;
+
   return (
     <>
-      <Header siteTitle={data.site.siteMetadata?.title || `Title`} />
+      {/* Pass the props down to the Header component */}
+      <Header 
+        siteTitle={siteTitle}
+        isLoggedIn={isLoggedIn}
+        onLogout={onLogout}
+      />
       <div
         style={{
           margin: `0 auto`,
-          // Use the prop to conditionally set the maxWidth
           maxWidth: isFullWidth ? 'none' : 'var(--size-content)',
-          padding: `var(--size-gutter)`,
+          // Keep your full-width logic
         }}
       >
         <main>{children}</main>
-  
+        {/* ... your footer ... */}
       </div>
     </>
   )
 }
 
-export default Layout
+export default Layout;

@@ -1,0 +1,34 @@
+.headerContainer {
+  display: flex;
+  justify-content: space-between; /* This is the magic for positioning */
+  align-items: center;
+  padding: 1rem var(--size-gutter); /* Use variables from layout.css */
+  background: #fdfcff;
+  border-bottom: 1px solid #e9d8f8;
+}
+
+.siteTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary); /* Use variable from layout.css */
+  text-decoration: none;
+}
+
+.logoutButton {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.logoutButton:hover,
+.logoutButton:focus {
+  background-color: var(--color-primary);
+  color: #fff;
+  outline: none;
+}

@@ -86,3 +86,20 @@
     font-size: 1.8rem; /* Make title smaller on mobile */
   }
 }
+/* Add/Update these styles in LiveDashboard.Module.css */
+
+/* This will be the new home for our dropdown */
+.dashboardControls {
+  display: flex;
+  justify-content: flex-end; /* Pushes dropdown to the right */
+  margin-bottom: 1rem;
+}
+
+.timePeriodSelect {
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-weight: 500;
+}
