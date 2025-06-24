@@ -1,59 +1,48 @@
 import React, { useState, useEffect } from 'react';
-
-// Import the two screens we can show the user
 import WelcomeScreen from '../components/WelcomeScreen';
 import LiveDashboard from '../components/LiveDashboard';
+import Layout from '../components/layout';
 
-// This is the main "controller" for your app's homepage.
 const IndexPage = () => {
-  // 1. We need a state to hold the access token. It starts as null.
   const [accessToken, setAccessToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Add a loading state
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 2. This runs ONCE when the page loads, to check for an existing session.
   useEffect(() => {
-    // Look in the browser's session storage for our token.
     const storedToken = sessionStorage.getItem('bankvizz_token');
     
     if (storedToken) {
-      console.log("Found token in session storage. Preparing to show dashboard.");
-      setAccessToken(storedToken); // If we find it, put it in our state.
-    } else {
-      console.log("No token found. Showing welcome screen.");
+      setAccessToken(storedToken);
     }
     
-    // We are done checking, so we can stop showing the loading message.
     setIsLoading(false);
-  }, []); // The empty `[]` means this effect runs only on the initial render.
+  }, []);
 
-  // 3. This function will handle logging out or if the token expires.
   const handleLogout = () => {
-    console.log("Logging out: removing token from state and storage.");
     sessionStorage.removeItem('bankvizz_token');
-    setAccessToken(null); // Clear the token from our state.
+    setAccessToken(null);
   };
 
-  // While we are checking for the token, show a brief loading message.
   if (isLoading) {
-    return <div>Loading...</div>;
+    // You can keep a simple loading state or make it fancier
+    return <div style={{ textAlign: 'center', padding: '5rem' }}>Loading...</div>;
   }
 
-  // 4. This is the core logic: Conditional Rendering.
-  return (
-    <main>
-
-      {/* If the `accessToken` state has a value, render the Dashboard. */}
-      {/* Otherwise, render the Welcome Screen. */}
-      {accessToken ? (
+  // This is the key change: apply the Layout conditionally.
+  // The <main> wrapper is also removed as <Layout> provides its own.
+  if (accessToken) {
+    // If the user is logged in, show the Dashboard WITH the Layout
+    return (
+      <Layout>
         <LiveDashboard 
           accessToken={accessToken} 
           onTokenExpired={handleLogout} 
         />
-      ) : (
-        <WelcomeScreen />
-      )}
-    </main>
-  );
+      </Layout>
+    );
+  } else {
+    // If the user is not logged in, show the Welcome Screen WITHOUT the Layout
+    return <WelcomeScreen />;
+  }
 };
 
 export default IndexPage;

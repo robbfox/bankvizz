@@ -1,23 +1,64 @@
+/*
+ * The container is now a flexbox "stage" that takes up the full screen.
+ */
 .container {
-  text-align: center;
-  padding: 4rem 1rem;
-  max-width: 2800px;
-  margin: 0 auto;
+  /* Basic setup */
   background-image: url('/image.webp');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  min-height: 100vh;
   color: #fff;
+  min-height: 100vh;
+  padding: 1rem; /* Add some padding to prevent content from touching edges */
+  
+  /* Flexbox for centering */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  
+  /* This is CRUCIAL for positioning the footer at the bottom */
+  position: relative; 
 }
 
+/*
+ * This content block will be centered by the container's flex properties.
+ */
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center vertically */
+  align-items: center;     /* Center horizontally */
+  text-align: center;
+  flex-grow: 1; /* Allows this element to take up the available space */
+}
+
+/* 
+ * The footer is now "absolutely positioned" relative to the .container.
+ * This pins it to the bottom, regardless of content height.
+ */
+.footer {
+  width: 100%;
+  text-align: center; /* Center the text inside the footer */
+  padding: 1rem 0;     /* Give it some vertical breathing room */
+  font-size: 0.8rem;
+  color: #aaa;
+  
+  /* Positioning Magic */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Keep your existing styles for titles, etc. */
 .title {
   font-size: 2.5rem;
+  margin-bottom: 0.5rem; /* Tweak margins for better spacing */
 }
 
 .subtitle {
   font-size: 1.5rem;
   color: #ddd;
+  margin-bottom: 2rem;
 }
 
 .securityNote {
@@ -25,6 +66,7 @@
   font-size: 0.95rem;
   color: #bbb;
 }
+
 
 @media (max-width: 600px) {
   .title {
