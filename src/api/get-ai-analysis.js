@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     // --- Create the Prompt for Gemini ---
     // We will format the transaction data into a clear prompt.
     const prompt = `
-      You are a helpful personal finance assistant named BankVizz.
+      You are a helpful personal finance assistant named BankViz.
       Analyze the following spending data and provide a brief, friendly summary (2-3 paragraphs) of the user's spending habits.
       Identify the top 3 spending categories, and point out any obvious outliers or unusual spending patterns.
       Then, offer one or two actionable, encouraging, and specific pieces of advice for potential savings.
