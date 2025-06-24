@@ -1,0 +1,39 @@
+.container {
+  text-align: center;
+  padding: 4rem 1rem;
+  max-width: 2800px;
+  margin: 0 auto;
+  background-image: url('/image.webp');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 100vh;
+  color: #fff;
+}
+
+.title {
+  font-size: 2.5rem;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  color: #ddd;
+}
+
+.securityNote {
+  margin-top: 2.5rem;
+  font-size: 0.95rem;
+  color: #bbb;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 2rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+  }
+  .securityNote {
+    font-size: 0.8rem;
+  }
+}

@@ -41,6 +41,7 @@ const IndexPage = () => {
   // 4. This is the core logic: Conditional Rendering.
   return (
     <main>
+
       {/* If the `accessToken` state has a value, render the Dashboard. */}
       {/* Otherwise, render the Welcome Screen. */}
       {accessToken ? (

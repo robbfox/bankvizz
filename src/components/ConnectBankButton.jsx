@@ -21,8 +21,16 @@ const ConnectBankButton = () => {
       onClick={handleClick} 
       className="connect-button" 
       title="Connect to your bank"
+      style={{ 
+        backgroundColor: '#0070f3', 
+        color: '#fff', 
+        padding: '10px 20px', 
+        borderRadius: '5px', 
+        border: 'none', 
+        cursor: 'pointer' 
+      }}
     >
-      Connect to NatWest via TrueLayer
+      Connect to your bank via TrueLayer
     </button>
   );
 };
