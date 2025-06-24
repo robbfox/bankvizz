@@ -1,48 +1,13 @@
-// src/api/exchange.js
-
-import axios from 'axios';
+// /api/exchange.js -- CANARY TEST
 
 export default async function handler(req, res) {
-  // This function MUST receive a POST request.
-  // This check ensures it does, otherwise it returns a 405.
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
-  }
-
-  const { code } = req.body;
-  if (!code) {
-    return res.status(400).json({ error: 'Authorization code not provided.' });
-  }
+  // This is the very first thing the function will do.
+  console.log("--- CANARY TEST: /api/exchange function was successfully invoked! ---");
   
-  const clientId = process.env.TRUELAYER_CLIENT_ID;
-  const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
-
-  if (!clientId || !clientSecret) {
-    console.error("CRITICAL: Missing TrueLayer environment variables on Vercel.");
-    return res.status(500).json({ error: 'Server configuration error.' });
-  }
-
-  const deploymentUrl = process.env.URL || 'http://localhost:8000';
-  const redirectUri = `${deploymentUrl}/auth-callback`;
-
-  const params = new URLSearchParams();
-  params.append('grant_type', 'authorization_code');
-  params.append('client_id', clientId);
-  params.append('client_secret', clientSecret);
-  params.append('redirect_uri', redirectUri);
-  params.append('code', code);
-  
-  try {
-    const tokenUrl = 'https://auth.truelayer.com/connect/token';
-    const response = await axios.post(tokenUrl, params);
-    
-    return res.status(200).json({ accessToken: response.data.access_token });
-
-  } catch (error) {
-    console.error("TrueLayer API Error:", error.response?.data || error.message);
-    return res.status(500).json({ 
-      error: 'Token exchange failed.', 
-      details: error.response?.data || 'An unknown error occurred.'
-    });
-  }
+  // We will immediately return a custom error so we can see it on the frontend.
+  // This proves the function ran and was able to send a response.
+  res.status(500).json({ 
+    error: 'CANARY_SUCCESS', 
+    message: 'The canary function ran. The problem is in the original exchange.js code.' 
+  });
 }
