@@ -1,43 +1,63 @@
-import axios from 'axios';
+// src/api/exchange.js
 
 export default async function handler(req, res) {
-  // We expect the token to be sent in the Authorization header.
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Unauthorized: No token provided.' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const accessToken = authHeader.split(' ')[1];
+  // --- VERCEL ENVIRONMENT DEBUGGER ---
+  console.log("\n--- VERCEL DEBUGGER for /api/exchange ---");
+
+  // Log all relevant Vercel environment variables
+  console.log("process.env.VERCEL_URL:", process.env.VERCEL_URL);
+  console.log("process.env.VERCEL_BRANCH_URL:", process.env.VERCEL_BRANCH_URL);
+  console.log("process.env.VERCEL_ENV:", process.env.VERCEL_ENV);
+  console.log("process.env.URL:", process.env.URL); // Another Vercel alias for the deployment URL
+
+  // --- CONSTRUCT THE REDIRECT URI ---
+  // Let's use the most reliable variable: `VERCEL_URL` is for the main site URL.
+  // `URL` is the canonical URL for THIS specific deployment (best for previews).
+  const deploymentUrl = process.env.URL || `http://localhost:8000`;
+  const redirectUri = deploymentUrl.startsWith('http') 
+    ? `${deploymentUrl}/auth-callback`
+    : `https://${deploymentUrl}/auth-callback`;
+
+  console.log("\n--- CONSTRUCTED URI ---");
+  console.log("Final derived redirect_uri:", redirectUri);
   
-  // Use the correct Live API endpoint
-  const accountsUrl = 'https://api.truelayer.com/data/v1/accounts';
+  // --- END OF DEBUGGING ---
 
-  try {
-    // 1. First, get the list of accounts to find the account ID
-    const accountsResponse = await axios.get(accountsUrl, {
-      headers: { 'Authorization': `Bearer ${accessToken}` },
-    });
+  // For this test, we will not call TrueLayer. We will just return the
+  // URI we constructed so you can see it in your browser's network tab.
+  // This helps confirm the frontend is calling this function correctly.
+  return res.status(418).json({
+    message: "This is a debug response. Check your Vercel function logs.",
+    derivedRedirectUri: redirectUri,
+    vercelEnv: process.env.VERCEL_ENV,
+    vercelUrl: process.env.URL,
+  });
 
-    if (accountsResponse.data.results.length === 0) {
-      return res.status(404).json({ error: 'No accounts found for this token.' });
+  // The rest of your original code is temporarily commented out below
+  /*
+    const { code } = req.body;
+    const clientId = process.env.TRUELAYER_CLIENT_ID;
+    const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      // ... error handling
     }
-    
-    // Use the first account found
-    const accountId = accountsResponse.data.results[0].account_id;
-    
-    // 2. Now, fetch transactions for that account ID
-    const transactionsUrl = `https://api.truelayer.com/data/v1/accounts/${accountId}/transactions`;
-    const transactionsResponse = await axios.get(transactionsUrl, {
-      headers: { 'Authorization': `Bearer ${accessToken}` },
-    });
-    
-    // 3. Send the transactions back to the front-end
-    res.status(200).json(transactionsResponse.data.results);
 
-  } catch (error) {
-    console.error('API Error:', error.response ? error.response.data : error.message);
-    const status = error.response ? error.response.status : 500;
-    const message = error.response ? error.response.data : 'Internal Server Error';
-    res.status(status).json({ error: 'Failed to fetch data from TrueLayer.', details: message });
-  }
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('client_id', clientId);
+    params.append('client_secret', clientSecret);
+    params.append('redirect_uri', redirectUri);
+    params.append('code', code);
+
+    try {
+      // ... axios call
+    } catch (error) {
+      // ... error handling
+    }
+  */
 }
