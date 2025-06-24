@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/get-ai-analysis.js": {
-      "maxDuration": 25
-    }
-  }
-}
