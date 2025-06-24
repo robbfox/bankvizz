@@ -1,47 +1,44 @@
-import axios from 'axios';
+// src/api/exchange.js
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { code } = req.body;
-  if (!code) {
-    return res.status(400).json({ error: 'Authorization code not provided.' });
-  }
+  // --- VERCEL ENVIRONMENT DEBUGGER ---
+  console.log("\n--- VERCEL DEBUGGER for /api/exchange ---");
+
+  // These are Vercel's system environment variables, available at runtime.
+  // We log them to see exactly what Vercel is providing for this deployment.
+  console.log("Vercel System Variable 'URL':", process.env.URL);
+  console.log("Vercel System Variable 'VERCEL_URL':", process.env.VERCEL_URL);
+  console.log("Vercel System Variable 'VERCEL_ENV':", process.env.VERCEL_ENV);
+
+  // --- CONSTRUCT THE REDIRECT URI ---
+  // We use `process.env.URL` because it's the canonical URL for THIS specific deployment.
+  // This is the most reliable variable for both production and preview deploys.
+  const deploymentUrl = process.env.URL || `http://localhost:8000`; // Fallback for local
   
-  const clientId = process.env.TRUELAYER_CLIENT_ID;
-  const clientSecret = process.env.TRUELAYER_CLIENT_SECRET;
+  // Ensure the URL has the https protocol if it's missing
+  const redirectUri = deploymentUrl.startsWith('http') 
+    ? `${deploymentUrl}/auth-callback`
+    : `https://${deploymentUrl}/auth-callback`;
 
-  if (!clientId || !clientSecret) {
-    console.error("CRITICAL ERROR: Server environment variables are missing.");
-    return res.status(500).json({ error: 'Server configuration error.' });
-  }
-
-  // Vercel's `URL` variable gives us the canonical URL for the deployment.
-  const deploymentUrl = process.env.URL || 'http://localhost:8000';
-  const redirectUri = `${deploymentUrl}/auth-callback`;
-
-  console.log("Exchanging token using redirect_uri:", redirectUri);
-
-  const params = new URLSearchParams();
-  params.append('grant_type', 'authorization_code');
-  params.append('client_id', clientId);
-  params.append('client_secret', clientSecret);
-  params.append('redirect_uri', redirectUri);
-  params.append('code', code);
+  console.log("\n--- CONSTRUCTED URI ---");
+  console.log("Final derived redirect_uri:", redirectUri);
   
-  try {
-    const tokenUrl = 'https://auth.truelayer.com/connect/token';
-    const response = await axios.post(tokenUrl, params);
-    
-    res.status(200).json({ accessToken: response.data.access_token });
+  // --- END OF DEBUGGING ---
 
-  } catch (error) {
-    console.error("Token exchange FAILED. TrueLayer Error:", error.response ? error.response.data : error.message);
-    res.status(500).json({ 
-      error: 'Token exchange failed.', 
-      details: error.response ? error.response.data : 'No response from server.'
-    });
-  }
+  // For this test, we stop here and return a debug response.
+  // This allows us to check the logs without causing further errors.
+  return res.status(418).json({
+    message: "This is a debug response. Please check your Vercel function logs.",
+    derivedRedirectUri: redirectUri,
+    vercelEnv: process.env.VERCEL_ENV,
+    deploymentUrlUsed: process.env.URL,
+  });
+
+  /*
+    The rest of your original code remains commented out for this test.
+  */
 }
