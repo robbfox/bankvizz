@@ -4,14 +4,38 @@
   publish = "public"
   functions = "netlify/functions"
 
-# Rule to handle API calls
+# --- REDIRECT AND REWRITE RULES ---
+
+# Rule to handle API calls by rewriting them to the functions directory.
+# This must come BEFORE the general SPA rule.
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
-  status = 200
+  status = 200 # A 200 status means this is a rewrite, not a redirect.
 
-# Rule to handle Single-Page App routing (for Gatsby)
+# Rule to handle Single-Page App routing (for Gatsby).
+# This rule handles all other paths.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# --- SERVERLESS FUNCTION CONFIGURATION ---
+
+# General settings for all functions can go here.
+# Note: timeout is a paid feature on Netlify for values > 10s.
+# We'll leave it commented out unless you upgrade your plan.
+[functions]
+  # timeout = 10 # This is the default for the free tier.
+
+# Specific configuration for the "get-ai-analysis" function.
+# The name in quotes must match the filename of your function.
+[functions."get-ai-analysis"]
+  # On a paid plan, you could increase the timeout like this:
+  # timeout = 25 
+
+  # For the free tier, we can't increase the timeout, but we can
+  # potentially increase the memory, which can sometimes help with
+  # performance on cold starts. The default is 1024MB.
+  # This line is optional and may not be needed if switching the model works.
+  # memory = 1024 
