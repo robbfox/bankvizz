@@ -11,7 +11,7 @@ const WelcomeScreen = () => {
       
       {/* This new wrapper will hold the content you want to center */}
       <div className={styles.content}>
-        <h1 className={styles.title}>Welcome to BankViz</h1>
+        <h1 className={styles.title}>Welcome to Fluium</h1>
         <p className={styles.subtitle}>Your personal finance dashboard...</p>
         <ConnectBankButton />
         <p className={styles.securityNote}>We use secure, read-only Open Banking...</p>
